@@ -1,7 +1,7 @@
 ## Polygon data ----
 #' Desikan-Killiany Cortical Atlas
 #'
-#' Coordinate data for the Desikan-Killany Cortical atlas,
+#' Coordinate data for the Desikan-Killiany Cortical atlas,
 #' with 40 regions in on the cortical surface of the brain.
 #'
 #' @docType data
@@ -14,6 +14,7 @@
 #' (\href{https://academic.oup.com/cercor/article/14/1/11/433466}{PubMed})
 #'
 #' @return An object of class 'brain_atlas' for plotting with ggseg
+#'
 #' @examples
 #' data(dk)
 "dk"

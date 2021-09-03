@@ -1,6 +1,16 @@
+# ggseg 1.6.5
+
 # ggseg 1.6
 
-## ggseg 1.6.03
+## 1.6.4
+* Added options `hemi` and `side` to geom
+* improved `position_brain()` to accept character vector, and also support subcortical atlases
+
+## 1.6.3.01
+* fixed broken geom after changes to ggplot2 internals  
+* fixed spelling mistakes in docs
+
+## ggseg 1.6.3
 * removed function to display ggseg palettes
 * preparations for CRAN submission
     * added examples to more functions
@@ -53,11 +63,10 @@ and adaptability of the plots.
 # ggseg 1.5.4
 
 * dkt renamed to dk  
-    - the dkt (Desikan-Killany-Tourville) atlas is not yet available  
+    - the dkt (Desikan-Killiany-Tourville) atlas is not yet available  
 * atlas columns `area` renamed to `region`  
     - to avoid confusion with the calculation of cortical/surface area  
 * dk atlas region name "medial orbito frontal" changed to "medial orbitofrontal"  
-
 
 ## ggseg 1.5.3
 * Split ggseg, and ggseg3d into two different packages
@@ -67,7 +76,7 @@ and adaptability of the plots.
 
 ## ggseg 1.5.1
 
-* Changed ggseg_atlas-class to have nested columns for easier vieweing and wrangling
+* Changed ggseg_atlas-class to have nested columns for easier viewing and wrangling
 
 ## ggseg 1.5
 
@@ -79,7 +88,7 @@ and adaptability of the plots.
 * Moved paletted of ggsegExtra atlases to ggsegExtra package
 
 * Added a `NEWS.md` file to track changes to the package.
-* Changes all `data` options to `.data` to decrease possibility of column nameing overlap
+# * Changes all `data` options to `.data` to decrease possibility of column naming overlap
 * Added compatibility with `grouped` data.frames
 * Reduced internal atlases, to improve CRAN compatibility
 * Added function to install extra atlases from github easily

@@ -1,9 +1,6 @@
 ## ----setup, include=F---------------------------------------------------------
 knitr::opts_chunk$set(eval=TRUE, 
-                      out.width = "100%", 
                       fig.retina = 3)
-library(ggseg)
-library(dplyr)
 
 ## ----start--------------------------------------------------------------------
 library(ggseg)
@@ -44,7 +41,7 @@ dk %>%
   arrange(p)
 
 ## -----------------------------------------------------------------------------
-ggseg(someData, atlas=dk, mapping=aes(fill=p))
+ggplot(someData) +geom_brain( atlas=dk, mapping=aes(fill=p))
 
 ## -----------------------------------------------------------------------------
 newAtlas = dk %>% 
@@ -52,7 +49,11 @@ newAtlas = dk %>%
   left_join(someData) %>% 
   as_brain_atlas()
 
-ggseg(atlas=newAtlas, mapping=aes(fill=p), position="stacked")
+ggplot() +
+  geom_brain(atlas = newAtlas, 
+             mapping = aes(fill=p), 
+             position = position_brain(hemi ~ side)
+  )
 
 ## ----datasupp3----------------------------------------------------------------
 someData = data.frame(
@@ -62,7 +63,10 @@ someData = data.frame(
   AgeG = c(rep("Young",4), rep("Old",4)),
   stringsAsFactors = FALSE)
   
-ggseg(.data=someData, colour="white", mapping=aes(fill=p)) +
+ggplot(someData) +   
+  geom_brain(atlas = dk, 
+             colour="white", 
+             mapping=aes(fill=p)) +
   facet_wrap(~AgeG, ncol=1) +
   theme(legend.position = "bottom")
 
@@ -73,7 +77,10 @@ someData = someData %>%
   group_by(AgeG)
 
 # We can now supply the newAtlas as an atlas to ggseg
-ggseg(.data = someData, atlas=dk, colour="white", mapping=aes(fill=p)) +
+ggplot(someData) +
+  geom_brain(atlas=dk, 
+             colour="white",
+             mapping=aes(fill=p)) +
   facet_wrap(~AgeG, ncol=1) +
   theme(legend.position = "bottom") +
   scale_fill_gradientn(colours = c("royalblue","firebrick","goldenrod"),na.value="grey")
@@ -82,7 +89,10 @@ ggseg(.data = someData, atlas=dk, colour="white", mapping=aes(fill=p)) +
 someData %>% 
   group_by(AgeG) %>% 
 
-  ggseg(atlas=dk, colour="white", mapping=aes(fill=p)) +
+  ggplot() +
+  geom_brain(atlas=dk, 
+             colour="white", 
+             mapping=aes(fill=p)) +
   facet_wrap(~AgeG, ncol=1) +
   theme(legend.position = "bottom") +
   scale_fill_gradientn(colours = c("royalblue","firebrick","goldenrod"),na.value="grey")

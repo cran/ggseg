@@ -43,7 +43,7 @@ a ggplot object
 Plotting results from analyses done on data derived from brain
 segmentations is a common need, but may be quite laborious.
 Results from such analyses are usually easier to interpret if
-the plot can mimmick the shape and position in the brain it
+the plot can mimic the shape and position in the brain it
 represents.
 
 \code{ggseg} plots and returns a ggplot object of plotted
@@ -57,10 +57,10 @@ a brain-plot wither with ggplot (2D polygons) or plotly (3d meshes).
 \describe{
 
 \item{`dk`}{
-The Desikan-Killiany Cortical Atlas [default], Freesurfer cortical segmentations.}
+The Desikan-Killiany Cortical Atlas [default], FreeSurfer cortical segmentations.}
 
 \item{`aseg`}{
-Freesurfer automatic subcortical segmentation of a brain volume}
+FreeSurfer automatic subcortical segmentation of a brain volume}
 }
 }
 \examples{
@@ -75,8 +75,8 @@ ggseg(adapt_scales = FALSE)
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/LCBC-UiO/ggseg}
-  \item Report bugs at \url{https://github.com/LCBC-UiO/ggseg/issues}
+  \item \url{https://github.com/ggseg/ggseg}
+  \item Report bugs at \url{https://github.com/ggseg/ggseg/issues}
 }
 
 
@@ -92,6 +92,6 @@ Authors:
 }
 
 
-Athanasia Mowinckel and Didac Pineiro
+Athanasia Mo Mowinckel and Didac Vidal-Piñeiro
 }
 \keyword{internal}

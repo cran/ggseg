@@ -26,6 +26,16 @@ LayerBrain <- ggproto("LayerBrain", ggplot2:::Layer,
                           stop("No atlas supplied, please provide a brain atlas to the geom.",
                                call. = FALSE)
 
+                        if(!is.null(self$geom_params$hemi)){
+                          hemi <- match.arg(self$geom_params$hemi, unique(atlas$hemi))
+                          atlas <- atlas[atlas$hemi %in% hemi,]
+                        }
+
+                        if(!is.null(self$geom_params$side)){
+                          side <- match.arg(self$geom_params$side, unique(atlas$side))
+                          atlas <- atlas[atlas$side %in% side,]
+                        }
+
                         if(class(dt)[1] != "waiver"){
 
                           data <- brain_join(dt, atlas)
@@ -47,63 +57,48 @@ LayerBrain <- ggproto("LayerBrain", ggplot2:::Layer,
                           }
 
                         }else{
-                          data <- as.data.frame(self$geom_params$atlas)
-
+                          data <- atlas
                         }
 
                         data <- sf::st_as_sf(data)
 
                         # automatically determine the name of the geometry column
                         # and add the mapping if it doesn't exist
-                        if ((isTRUE(self$inherit.aes) && is.null(self$mapping$geometry) && is.null(plot$mapping$geometry)) ||
-                            (!isTRUE(self$inherit.aes) && is.null(self$mapping$geometry))) {
+                        if ((isTRUE(self$inherit.aes) && is.null(self$computed_mapping$geometry) && is.null(plot$computed_mapping$geometry)) ||
+                            (!isTRUE(self$inherit.aes) && is.null(self$computed_mapping$geometry))) {
                           if (ggplot2:::is_sf(data)) {
                             geometry_col <- attr(data, "sf_column")
-                            self$mapping$geometry <- as.name(geometry_col)
+                            self$computed_mapping$geometry <- as.name(geometry_col)
                           }
                         }
 
-                        if ((isTRUE(self$inherit.aes) && is.null(self$mapping$hemi) && is.null(plot$mapping$hemi)) ||
-                            (!isTRUE(self$inherit.aes) && is.null(self$mapping$hemi))) {
-                          self$mapping$hemi <- as.name("hemi")
+                        if ((isTRUE(self$inherit.aes) && is.null(self$computed_mapping$hemi) && is.null(plot$computed_mapping$hemi)) ||
+                            (!isTRUE(self$inherit.aes) && is.null(self$computed_mapping$hemi))) {
+                          self$computed_mapping$hemi <- as.name("hemi")
                         }
 
-                        if ((isTRUE(self$inherit.aes) && is.null(self$mapping$side) && is.null(plot$mapping$side)) ||
-                            (!isTRUE(self$inherit.aes) && is.null(self$mapping$side))) {
-                          self$mapping$side <- as.name("side")
+                        if ((isTRUE(self$inherit.aes) && is.null(self$computed_mapping$side) && is.null(plot$computed_mapping$side)) ||
+                            (!isTRUE(self$inherit.aes) && is.null(self$computed_mapping$side))) {
+                          self$computed_mapping$side <- as.name("side")
                         }
 
-                        if ((isTRUE(self$inherit.aes) && is.null(self$mapping$type) && is.null(plot$mapping$type)) ||
-                            (!isTRUE(self$inherit.aes) && is.null(self$mapping$type))) {
-                          self$mapping$type <- as.name("type")
+                        if ((isTRUE(self$inherit.aes) && is.null(self$computed_mapping$type) && is.null(plot$computed_mapping$type)) ||
+                            (!isTRUE(self$inherit.aes) && is.null(self$computed_mapping$type))) {
+                          self$computed_mapping$type <- as.name("type")
                         }
 
-                        if ((isTRUE(self$inherit.aes) && is.null(self$mapping$fill) && is.null(plot$mapping$fill)) ||
-                            (!isTRUE(self$inherit.aes) && is.null(self$mapping$fill))) {
-                          self$mapping$fill <- as.name("region")
+                        if ((isTRUE(self$inherit.aes) && is.null(self$computed_mapping$fill) && is.null(plot$computed_mapping$fill)) ||
+                            (!isTRUE(self$inherit.aes) && is.null(self$computed_mapping$fill))) {
+                          self$computed_mapping$fill <- as.name("region")
                         }
-
 
                         # work around for later merging.
                         # shitty solution
-                        self$mapping$label <- as.name("label")
+                        self$computed_mapping$label <- as.name("label")
 
                         # automatically determine the legend type
-                        if (is.na(self$show.legend) || isTRUE(self$show.legend)) {
-                          if (ggplot2:::is_sf(data)) {
-                            sf_type <- ggplot2:::detect_sf_type(data)
-                            if (sf_type == "point") {
-                              self$geom_params$legend <- "point"
-                            } else if (sf_type == "line") {
-                              self$geom_params$legend <- "line"
-                            } else {
-                              self$geom_params$legend <- "polygon"
-                            }
-                          }
-                        } else if (is.character(self$show.legend)) {
-                          self$geom_params$legend <- self$show.legend
-                          self$show.legend <- TRUE
-                        }
+                        self$geom_params$legend <- "polygon"
+
                         data
                       }
 )

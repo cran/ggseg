@@ -9,10 +9,7 @@ vignette: >
 
 ```{r setup, include=F}
 knitr::opts_chunk$set(eval=TRUE, 
-                      out.width = "100%", 
                       fig.retina = 3)
-library(ggseg)
-library(dplyr)
 ```
 
 ## Introduction
@@ -104,7 +101,7 @@ The merge function has recognized that there are two equally named columns, and 
 When you have managed to create data that merges nicely with the atlas, you can go ahead and supply it to the function.
 
 ```{r}
-ggseg(someData, atlas=dk, mapping=aes(fill=p))
+ggplot(someData) +geom_brain( atlas=dk, mapping=aes(fill=p))
 ```
 
 You can actually also supply it directly as an atlas. 
@@ -116,7 +113,11 @@ newAtlas = dk %>%
   left_join(someData) %>% 
   as_brain_atlas()
 
-ggseg(atlas=newAtlas, mapping=aes(fill=p), position="stacked")
+ggplot() +
+  geom_brain(atlas = newAtlas, 
+             mapping = aes(fill=p), 
+             position = position_brain(hemi ~ side)
+  )
 ```
 
 It is this possibility of supplying a custom atlas that gives you particular flexibility, though a little tricky to begin with.
@@ -130,7 +131,10 @@ someData = data.frame(
   AgeG = c(rep("Young",4), rep("Old",4)),
   stringsAsFactors = FALSE)
   
-ggseg(.data=someData, colour="white", mapping=aes(fill=p)) +
+ggplot(someData) +   
+  geom_brain(atlas = dk, 
+             colour="white", 
+             mapping=aes(fill=p)) +
   facet_wrap(~AgeG, ncol=1) +
   theme(legend.position = "bottom")
 
@@ -138,7 +142,7 @@ ggseg(.data=someData, colour="white", mapping=aes(fill=p)) +
 
 See how you have three facets, when you only have 2 groups, and that the "background"  brain is not printed in your two groups. 
 This is because for ggplot, that is what the data looks like.
-For this to work, you can supply already grouped data to `ggseg`, but you must make sure they are grouped by the columns you will use for facetting, or else it will not work. 
+For this to work, you can supply already grouped data to `ggseg`, but you must make sure they are grouped by the columns you will use for faceting, or else it will not work. 
 
 ```{r duplicate}
 # If you group_by the columns you will facet by, this will work well.
@@ -146,20 +150,26 @@ someData = someData %>%
   group_by(AgeG)
 
 # We can now supply the newAtlas as an atlas to ggseg
-ggseg(.data = someData, atlas=dk, colour="white", mapping=aes(fill=p)) +
+ggplot(someData) +
+  geom_brain(atlas=dk, 
+             colour="white",
+             mapping=aes(fill=p)) +
   facet_wrap(~AgeG, ncol=1) +
   theme(legend.position = "bottom") +
   scale_fill_gradientn(colours = c("royalblue","firebrick","goldenrod"),na.value="grey")
 ```
 
 
-This whole procedure can be piped together, so you dont have to save all the intermediate steps.
+This whole procedure can be piped together, so you don't have to save all the intermediate steps.
 
 ```{r duplicatepipe}
 someData %>% 
   group_by(AgeG) %>% 
 
-  ggseg(atlas=dk, colour="white", mapping=aes(fill=p)) +
+  ggplot() +
+  geom_brain(atlas=dk, 
+             colour="white", 
+             mapping=aes(fill=p)) +
   facet_wrap(~AgeG, ncol=1) +
   theme(legend.position = "bottom") +
   scale_fill_gradientn(colours = c("royalblue","firebrick","goldenrod"),na.value="grey")

@@ -11,13 +11,12 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  out.width = "100%",
-  fig.width = 10
+  fig.width = 6
 )
 ```
 
 The new ggseg-package version has introduced a new way of plotting the brain atlases, through a custom `geom_brain` (variant of geom_sf). 
-This has introduced alot of new functionality into the package, in addition to some new custom methods and objects. 
+This has introduced a lot of new functionality into the package, in addition to some new custom methods and objects. 
 
 ```{r setup}
 library(ggseg)
@@ -96,9 +95,41 @@ ggplot() +
   geom_brain(atlas = dk, position = position_brain(hemi ~ side))
 ```
 
+A new addition to the positions, is the ability to also specify the order directly through a character vector. By default, the position is:
+
+```{r}
+cortical_pos <- c("left lateral", "left medial", "right medial", "right lateral")
+ggplot() +
+  geom_brain(atlas = dk, position = position_brain(cortical_pos))
+
+# Which can easily be switched around!
+cortical_pos <- c("right lateral", "left medial", "right medial", "left lateral")
+ggplot() +
+  geom_brain(atlas = dk, position = position_brain(cortical_pos))
+```
+
+## Reducing slices
+
+Many have wanted the option like in `ggseg()` to only see a single hemisphere or slice. This functionality had been added through the `hemi` and `side` arguments to `geom_brain()`, mimicking the way `ggseg()` works.
+
+```{r}
+ggplot() +
+  geom_brain(atlas = dk, side = "lateral")
+
+ggplot() +
+  geom_brain(atlas = dk, hemi = "left")
+```
+
+This also should work for subcortical atlases, but the hemisphere (`hemi`) specification should be used carefully, as it might end up looking quite different than what you intended!
+
+```{r}
+ggplot() +
+  geom_brain(atlas = aseg, side = "axial", hemi = "left")
+```
+
 
 ## Plotting with data
-Of course, as usual, people will have their own data they want to add to the plots, usingcolumns from their own data to the plot aesthetics. 
+Of course, as usual, people will have their own data they want to add to the plots, using columns from their own data to the plot aesthetics. 
 By making sure _at least one column_ in your data has the same name and overlapping content as a column in the atlas data, geom_brain will merge your data with the atlas and create your plots. 
 
 ```{r}
@@ -129,7 +160,7 @@ ggplot(someData) +
 
 ### Facet group data
 
-Just like in ggseg, though, you still need to do some double work for facetting to work correctly.
+Just like in ggseg, though, you still need to do some double work for faceting to work correctly.
 Because the atlas and your data need to be merged correctly, you will need to `group_by` your data _before_ giving it to ggplot, for facets to work.
 
 ```{r}

@@ -2,8 +2,7 @@
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  out.width = "100%",
-  fig.width = 10
+  fig.width = 6
 )
 
 ## ----setup--------------------------------------------------------------------
@@ -37,6 +36,27 @@ ggplot() +
 ## -----------------------------------------------------------------------------
 ggplot() +
   geom_brain(atlas = dk, position = position_brain(hemi ~ side))
+
+## -----------------------------------------------------------------------------
+cortical_pos <- c("left lateral", "left medial", "right medial", "right lateral")
+ggplot() +
+  geom_brain(atlas = dk, position = position_brain(cortical_pos))
+
+# Which can easily be switched around!
+cortical_pos <- c("right lateral", "left medial", "right medial", "left lateral")
+ggplot() +
+  geom_brain(atlas = dk, position = position_brain(cortical_pos))
+
+## -----------------------------------------------------------------------------
+ggplot() +
+  geom_brain(atlas = dk, side = "lateral")
+
+ggplot() +
+  geom_brain(atlas = dk, hemi = "left")
+
+## -----------------------------------------------------------------------------
+ggplot() +
+  geom_brain(atlas = aseg, side = "axial", hemi = "left")
 
 ## -----------------------------------------------------------------------------
 library(dplyr)
