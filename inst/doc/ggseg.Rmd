@@ -124,7 +124,7 @@ This also should work for subcortical atlases, but the hemisphere (`hemi`) speci
 
 ```{r}
 ggplot() +
-  geom_brain(atlas = aseg, side = "axial", hemi = "left")
+  geom_brain(atlas = aseg, side = "coronal", hemi = "left")
 ```
 
 
@@ -185,6 +185,39 @@ someData %>%
   facet_wrap(~groups) +
   ggtitle("correct facetting")
 ```
+
+
+## Plotting regions as categorical
+
+You can call `plot()` on any ggseg-atlas and get a preview of the entire atlas, with labels for each region.
+
+```{r}
+plot(dk)
+```
+
+Sometimes, though, you might still want to plot regions as categorical, but only a subset of them.
+To do this, we need to do a little hack.
+Since the ggseg plotting function copies over the entire atlas (so it can display each region), we need two columns in the incoming data.
+One to merge nicely with the atlas data and one to specify which regions to colour. 
+These two columns will likely contain mirrored information, but with different names.
+
+```{r}
+
+data <- data.frame(
+  region = brain_regions(dk)[1:3],
+  reg_col = brain_regions(dk)[1:3]
+)
+
+data
+
+ggplot(data) +
+  geom_brain(atlas = dk,
+             aes(fill = reg_col)) +
+  scale_fill_brain2(dk$palette[data$region] )
+```
+
+
+
 
 ## Plotting with ggseg
 

@@ -56,7 +56,7 @@ ggplot() +
 
 ## -----------------------------------------------------------------------------
 ggplot() +
-  geom_brain(atlas = aseg, side = "axial", hemi = "left")
+  geom_brain(atlas = aseg, side = "coronal", hemi = "left")
 
 ## -----------------------------------------------------------------------------
 library(dplyr)
@@ -99,6 +99,23 @@ someData %>%
              aes(fill = p)) +
   facet_wrap(~groups) +
   ggtitle("correct facetting")
+
+## -----------------------------------------------------------------------------
+plot(dk)
+
+## -----------------------------------------------------------------------------
+
+data <- data.frame(
+  region = brain_regions(dk)[1:3],
+  reg_col = brain_regions(dk)[1:3]
+)
+
+data
+
+ggplot(data) +
+  geom_brain(atlas = dk,
+             aes(fill = reg_col)) +
+  scale_fill_brain2(dk$palette[data$region] )
 
 ## -----------------------------------------------------------------------------
 ggseg(someData, atlas = dk, 
