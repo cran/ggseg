@@ -1,21 +1,22 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 
+library(ggseg)
 devtools::load_all(".")
 subject_dir <- here::here("tests/testthat/data/")
 
 stats_file <- paste0(subject_dir, "bert/stats/lh.aparc.stats")
 
-## ---- eval=FALSE--------------------------------------------------------------
-#  library(ggseg)
-#  library(ggplot2)
-#  
-#  subjects_dir <- "/Applications/freesurfer/subjects/"
+## ----eval=FALSE---------------------------------------------------------------
+# library(ggseg)
+# library(ggplot2)
+# 
+# subjects_dir <- "/Applications/freesurfer/subjects/"
 
-## ---- echo = FALSE------------------------------------------------------------
+## ----echo = FALSE-------------------------------------------------------------
 library(ggseg)
 library(ggplot2)
 
@@ -27,6 +28,7 @@ data <- read_freesurfer_stats(stats_file)
 data
 
 ## -----------------------------------------------------------------------------
+library(dplyr)
 data %>% 
   mutate(label = paste0("lh_", label)) %>% 
   ggseg(atlas = dk, mapping = aes(fill = ThickAvg))
@@ -60,9 +62,9 @@ read_freesurfer_table(table_path)
 dat <- read_freesurfer_table(table_path, measure = "volume")
 dat
 
-## ---- eval = FALSE------------------------------------------------------------
-#  dat %>%
-#    ggseg(mapping = aes(fill = volume))
+## ----eval = FALSE-------------------------------------------------------------
+# dat %>%
+#   ggseg(mapping = aes(fill = volume))
 
 ## -----------------------------------------------------------------------------
 dat %>% 

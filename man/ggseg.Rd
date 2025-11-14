@@ -2,8 +2,8 @@
 % Please edit documentation in R/ggseg-package.R, R/ggseg.R
 \docType{package}
 \name{ggseg}
-\alias{ggseg}
 \alias{ggseg-package}
+\alias{ggseg}
 \title{ggseg: Plot brain segmentations with ggplot}
 \usage{
 ggseg(
@@ -67,10 +67,11 @@ FreeSurfer automatic subcortical segmentation of a brain volume}
 library(ggplot2)
 ggseg()
 ggseg(mapping=aes(fill=region))
+\dontrun{
 ggseg(colour="black", size=.7, mapping=aes(fill=region)) + theme_void()
 ggseg(position = "stacked")
 ggseg(adapt_scales = FALSE)
-
+}
 }
 \seealso{
 Useful links:
@@ -89,6 +90,7 @@ Useful links:
 Authors:
 \itemize{
   \item Didac Vidal-Piñeiro \email{d.v.pineiro@psykologi.uio.no} (\href{https://orcid.org/0000-0001-9997-9156}{ORCID})
+  \item Ramiro Magno \email{ramiro.magno@gmail.com} (\href{https://orcid.org/0000-0001-5226-3441}{ORCID})
 }
 
 

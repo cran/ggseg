@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -9,8 +9,8 @@ knitr::opts_chunk$set(
 library(ggseg)
 library(ggplot2)
 
-
 ## -----------------------------------------------------------------------------
+library(ggseg)
 dk$atlas
 dk$type
 dk$palette

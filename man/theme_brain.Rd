@@ -50,18 +50,20 @@ Default theme for ggseg. Transparent background, no axis lines, and no grid.}
 Dark equivalent to theme_brain, with black background, and light text.}
 
 \item{`theme_custombrain`}{
-Theme for easy customisation of the brain themes.}
+Theme for easy customization of the brain themes.}
 
 }
 }
 \examples{
 library(ggplot2)
 
-ggplot() +
-  geom_brain(atlas = dk) +
+p <- ggplot() +
+  geom_brain(atlas = dk)
+
+p +
   theme_brain()
 
-  geom_brain(atlas = dk) +
+p +
   theme_darkbrain()
 
 }
