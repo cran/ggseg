@@ -38,12 +38,23 @@ ggplot() +
   geom_brain(atlas = dk, position = position_brain(hemi ~ side))
 
 ## -----------------------------------------------------------------------------
-cortical_pos <- c("left lateral", "left medial", "right medial", "right lateral")
+cortical_pos <- c(
+  "left lateral",
+  "left medial",
+  "right medial",
+  "right lateral"
+)
 ggplot() +
   geom_brain(atlas = dk, position = position_brain(cortical_pos))
 
 # Which can easily be switched around!
-cortical_pos <- c("right lateral", "left medial", "right medial", "left lateral")
+cortical_pos <- c(
+  "right lateral",
+  "left medial",
+  "right medial",
+  "left lateral"
+)
+
 ggplot() +
   geom_brain(atlas = dk, position = position_brain(cortical_pos))
 
@@ -60,43 +71,60 @@ ggplot() +
 
 ## -----------------------------------------------------------------------------
 library(dplyr)
-        
-someData = tibble(
-  region = c("transverse temporal", "insula",
-           "precentral","superior parietal"), 
-  p = sample(seq(0,.5,.001), 4)
+
+some_data <- tibble(
+  region = c(
+    "transverse temporal",
+    "insula",
+    "precentral",
+    "superior parietal"
+  ),
+  p = sample(seq(0, .5, .001), 4)
 )
 
-someData
+some_data
 
 ## -----------------------------------------------------------------------------
-ggplot(someData) +
-  geom_brain(atlas = dk, 
-             position = position_brain(hemi ~ side),
-             aes(fill = p)) +
+ggplot(some_data) +
+  geom_brain(
+    atlas = dk,
+    position = position_brain(hemi ~ side),
+    aes(fill = p)
+  ) +
   scale_fill_viridis_c(option = "cividis", direction = -1) +
   theme_void() +
-  labs(title = "My awesome title", 
-       subtitle = "of a brain atlas plot",
-       caption = "I'm pretty happy about this!")
+  labs(
+    title = "My awesome title",
+    subtitle = "of a brain atlas plot",
+    caption = "I'm pretty happy about this!"
+  )
 
 ## -----------------------------------------------------------------------------
-someData <- tibble(
-  region = rep(c("transverse temporal", "insula",
-           "precentral","superior parietal"), 2), 
-  p = sample(seq(0,.5,.001), 8),
+some_data <- tibble(
+  region = rep(
+    c(
+      "transverse temporal",
+      "insula",
+      "precentral",
+      "superior parietal"
+    ),
+    2
+  ),
+  p = sample(seq(0, .5, .001), 8),
   groups = c(rep("g1", 4), rep("g2", 4))
 )
 
-someData
+some_data
 
 ## -----------------------------------------------------------------------------
-someData %>%
-  group_by(groups) %>%
+some_data |>
+  group_by(groups) |>
   ggplot() +
-  geom_brain(atlas = dk, 
-             position = position_brain(hemi ~ side),
-             aes(fill = p)) +
+  geom_brain(
+    atlas = dk,
+    position = position_brain(hemi ~ side),
+    aes(fill = p)
+  ) +
   facet_wrap(~groups) +
   ggtitle("correct facetting")
 
@@ -113,14 +141,16 @@ data <- data.frame(
 data
 
 ggplot(data) +
-  geom_brain(atlas = dk,
-             aes(fill = reg_col)) +
-  scale_fill_brain2(dk$palette[data$region] )
+  geom_brain(atlas = dk, aes(fill = reg_col)) +
+  scale_fill_brain2(dk$palette[data$region])
 
 ## -----------------------------------------------------------------------------
-ggseg(someData, atlas = dk, 
-      colour = "black",
-      size = .1, 
-      position = "stacked",
-      mapping = aes(fill = p))
+ggseg(
+  some_data,
+  atlas = dk,
+  colour = "black",
+  size = .1,
+  position = "stacked",
+  mapping = aes(fill = p)
+)
 

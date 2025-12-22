@@ -29,8 +29,8 @@ data
 
 ## -----------------------------------------------------------------------------
 library(dplyr)
-data %>% 
-  mutate(label = paste0("lh_", label)) %>% 
+data |>
+  mutate(label = paste0("lh_", label)) |>
   ggseg(atlas = dk, mapping = aes(fill = ThickAvg))
 
 ## -----------------------------------------------------------------------------
@@ -44,9 +44,9 @@ ggseg(dat, mapping = aes(fill = ThickStd))
 library(dplyr)
 library(tidyr)
 
-dat %>% 
-  gather(stat, val, -subject, -label) %>% 
-  group_by(stat) %>% 
+dat |>
+  gather(stat, val, -subject, -label) |>
+  group_by(stat) |>
   ggseg(mapping = aes(fill = val)) +
   facet_wrap(~stat)
 
@@ -63,11 +63,11 @@ dat <- read_freesurfer_table(table_path, measure = "volume")
 dat
 
 ## ----eval = FALSE-------------------------------------------------------------
-# dat %>%
+# dat |>
 #   ggseg(mapping = aes(fill = volume))
 
 ## -----------------------------------------------------------------------------
-dat %>% 
-  filter(grepl("lh|rh", label)) %>% 
+dat |>
+  filter(grepl("lh|rh", label)) |>
   ggseg(mapping = aes(fill = volume))
 

@@ -1,6 +1,6 @@
 Package: ggseg
 Title: Plotting Tool for Brain Atlases
-Version: 1.6.7
+Version: 1.6.8
 Authors@R: c(
     person("Athanasia Mo", "Mowinckel", 
             email = "a.m.mowinckel@psykologi.uio.no", 
@@ -21,7 +21,7 @@ Description: Contains 'ggplot2' geom for plotting brain atlases using
     <doi:10.1177/2515245920928009>.
 License: MIT + file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Depends: R (>= 3.3)
 LazyData: true
 LazyDataCompression: xz
@@ -33,12 +33,12 @@ VignetteBuilder: knitr
 URL: https://github.com/ggseg/ggseg
 BugReports: https://github.com/ggseg/ggseg/issues
 Language: en-US
-SystemRequirements: C++11, GDAL (>= 2.0.1), GEOS (>= 3.4.0), PROJ (>=
+SystemRequirements: C++17, GDAL (>= 2.0.1), GEOS (>= 3.4.0), PROJ (>=
         4.8.0)
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 NeedsCompilation: no
-Packaged: 2025-11-14 20:49:43 UTC; athanasm
+Packaged: 2025-12-22 15:27:00 UTC; athanasm
 Author: Athanasia Mo Mowinckel [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-5756-0223>),
   Didac Vidal-Piñeiro [aut] (ORCID:
@@ -46,4 +46,4 @@ Author: Athanasia Mo Mowinckel [aut, cre] (ORCID:
   Ramiro Magno [aut] (ORCID: <https://orcid.org/0000-0001-5226-3441>)
 Maintainer: Athanasia Mo Mowinckel <a.m.mowinckel@psykologi.uio.no>
 Repository: CRAN
-Date/Publication: 2025-11-14 23:50:08 UTC
+Date/Publication: 2025-12-22 16:20:10 UTC
