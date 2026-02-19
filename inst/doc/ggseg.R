@@ -1,156 +1,104 @@
-## ----include = FALSE----------------------------------------------------------
+## -----------------------------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.width = 6
 )
 
-## ----setup--------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(ggseg)
 library(ggplot2)
-
-## -----------------------------------------------------------------------------
-library(ggseg)
-dk$atlas
-dk$type
-dk$palette
-dk$data
-
-## -----------------------------------------------------------------------------
-plot(dk$data)
-
-## -----------------------------------------------------------------------------
-plot(dk)
 
 ## -----------------------------------------------------------------------------
 dk
 
 ## -----------------------------------------------------------------------------
-brain_regions(dk)
-brain_labels(dk)
+plot(dk())
+
+## -----------------------------------------------------------------------------
+ggseg.formats::atlas_regions(dk())
+ggseg.formats::atlas_labels(dk())
 
 ## -----------------------------------------------------------------------------
 ggplot() +
-  geom_brain(atlas = dk)
+  geom_brain(atlas = dk())
 
 ## -----------------------------------------------------------------------------
 ggplot() +
-  geom_brain(atlas = dk, position = position_brain(hemi ~ side))
-
-## -----------------------------------------------------------------------------
-cortical_pos <- c(
-  "left lateral",
-  "left medial",
-  "right medial",
-  "right lateral"
-)
-ggplot() +
-  geom_brain(atlas = dk, position = position_brain(cortical_pos))
-
-# Which can easily be switched around!
-cortical_pos <- c(
-  "right lateral",
-  "left medial",
-  "right medial",
-  "left lateral"
-)
-
-ggplot() +
-  geom_brain(atlas = dk, position = position_brain(cortical_pos))
+  geom_brain(atlas = dk(), position = position_brain(hemi ~ view))
 
 ## -----------------------------------------------------------------------------
 ggplot() +
-  geom_brain(atlas = dk, side = "lateral")
-
-ggplot() +
-  geom_brain(atlas = dk, hemi = "left")
+  geom_brain(
+    atlas = dk(),
+    position = position_brain(c(
+      "right lateral", "right medial",
+      "left lateral", "left medial"
+    ))
+  )
 
 ## -----------------------------------------------------------------------------
 ggplot() +
-  geom_brain(atlas = aseg, side = "coronal", hemi = "left")
+  geom_brain(atlas = dk(), view = "lateral")
+
+## -----------------------------------------------------------------------------
+ggplot() +
+  geom_brain(atlas = dk(), hemi = "left")
+
+## -----------------------------------------------------------------------------
+ggseg.formats::atlas_views(aseg())
 
 ## -----------------------------------------------------------------------------
 library(dplyr)
 
 some_data <- tibble(
   region = c(
-    "transverse temporal",
-    "insula",
-    "precentral",
-    "superior parietal"
+    "transverse temporal", "insula", "precentral", "superior parietal"
   ),
   p = sample(seq(0, .5, .001), 4)
 )
 
-some_data
-
-## -----------------------------------------------------------------------------
 ggplot(some_data) +
   geom_brain(
-    atlas = dk,
-    position = position_brain(hemi ~ side),
+    atlas = dk(),
+    position = position_brain(hemi ~ view),
     aes(fill = p)
   ) +
   scale_fill_viridis_c(option = "cividis", direction = -1) +
-  theme_void() +
-  labs(
-    title = "My awesome title",
-    subtitle = "of a brain atlas plot",
-    caption = "I'm pretty happy about this!"
-  )
+  theme_void()
 
 ## -----------------------------------------------------------------------------
 some_data <- tibble(
-  region = rep(
-    c(
-      "transverse temporal",
-      "insula",
-      "precentral",
-      "superior parietal"
-    ),
-    2
-  ),
+  region = rep(c(
+    "transverse temporal", "insula", "precentral", "superior parietal"
+  ), 2),
   p = sample(seq(0, .5, .001), 8),
-  groups = c(rep("g1", 4), rep("g2", 4))
+  group = c(rep("A", 4), rep("B", 4))
 )
 
-some_data
-
-## -----------------------------------------------------------------------------
-some_data |>
-  group_by(groups) |>
-  ggplot() +
+ggplot(some_data) +
   geom_brain(
-    atlas = dk,
-    position = position_brain(hemi ~ side),
+    atlas = dk(),
+    position = position_brain(hemi ~ view),
     aes(fill = p)
   ) +
-  facet_wrap(~groups) +
-  ggtitle("correct facetting")
+  facet_wrap(~group)
 
 ## -----------------------------------------------------------------------------
-plot(dk)
-
-## -----------------------------------------------------------------------------
-
 data <- data.frame(
-  region = brain_regions(dk)[1:3],
-  reg_col = brain_regions(dk)[1:3]
+  region = ggseg.formats::atlas_regions(dk())[1:3],
+  reg_col = ggseg.formats::atlas_regions(dk())[1:3]
 )
-
-data
 
 ggplot(data) +
-  geom_brain(atlas = dk, aes(fill = reg_col)) +
-  scale_fill_brain2(dk$palette[data$region])
+  geom_brain(atlas = dk(), aes(fill = reg_col)) +
+  scale_fill_brain_manual(dk()$palette[data$region])
 
 ## -----------------------------------------------------------------------------
-ggseg(
-  some_data,
-  atlas = dk,
-  colour = "black",
-  size = .1,
-  position = "stacked",
-  mapping = aes(fill = p)
-)
+# ggplot() +
+#   geom_brain(atlas = dk()) +
+#   theme_brain()
+
+## -----------------------------------------------------------------------------
+# install.packages("ggsegYeo2011", repos = "https://ggsegverse.r-universe.dev")
 
