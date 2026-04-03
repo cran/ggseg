@@ -1,3 +1,9 @@
+# ggseg 2.1.0
+
+* Support cerebellar atlas type in 2D view stacking. Cerebellar atlases
+  now use the same stacking layout as subcortical atlases in
+  `position_brain()`.
+
 # ggseg 2.0.0
 
 This is a major release that simplifies the package architecture by moving
@@ -60,6 +66,7 @@ atlas data structures and utilities to the
 
 * Added tracula (white matter tract) atlas as a re-export from ggseg.formats.
 
+* Improved documentation throughout with updated roxygen2 docs.
 
 # ggseg 1.6
 
