@@ -32,8 +32,10 @@ ggplot() +
   geom_brain(
     atlas = dk(),
     position = position_brain(c(
-      "right lateral", "right medial",
-      "left lateral", "left medial"
+      "right lateral",
+      "right medial",
+      "left lateral",
+      "left medial"
     ))
   )
 
@@ -53,9 +55,12 @@ library(dplyr)
 
 some_data <- tibble(
   region = c(
-    "transverse temporal", "insula", "precentral", "superior parietal"
+    "transverse temporal",
+    "insula",
+    "precentral",
+    "superior parietal"
   ),
-  p = sample(seq(0, .5, .001), 4)
+  p = sample(seq(0, 0.5, 0.001), 4)
 )
 
 ggplot(some_data) +
@@ -69,10 +74,16 @@ ggplot(some_data) +
 
 ## -----------------------------------------------------------------------------
 some_data <- tibble(
-  region = rep(c(
-    "transverse temporal", "insula", "precentral", "superior parietal"
-  ), 2),
-  p = sample(seq(0, .5, .001), 8),
+  region = rep(
+    c(
+      "transverse temporal",
+      "insula",
+      "precentral",
+      "superior parietal"
+    ),
+    2
+  ),
+  p = sample(seq(0, 0.5, 0.001), 8),
   group = c(rep("A", 4), rep("B", 4))
 )
 

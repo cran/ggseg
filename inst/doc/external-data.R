@@ -15,7 +15,7 @@ ggseg.formats::atlas_labels(dk())
 ## -----------------------------------------------------------------------------
 some_data <- tibble(
   region = c("superior temporal", "precentral", "lateral orbitofrontal"),
-  p = c(.03, .6, .05)
+  p = c(0.03, 0.6, 0.05)
 )
 some_data
 
@@ -40,7 +40,7 @@ some_data <- tibble(
     ),
     2
   ),
-  p = sample(seq(0, .5, .001), 8),
+  p = sample(seq(0, 0.5, 0.001), 8),
   group = c(rep("Young", 4), rep("Old", 4))
 )
 
@@ -60,7 +60,7 @@ names(atlas_df)
 ## -----------------------------------------------------------------------------
 some_data <- tibble(
   region = c("superior temporal", "precentral", "lateral orbitofrontal"),
-  p = c(.03, .6, .05)
+  p = c(0.03, 0.6, 0.05)
 )
 
 atlas_df |>
