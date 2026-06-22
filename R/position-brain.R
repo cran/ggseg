@@ -1,15 +1,13 @@
 #' Reposition brain slices
 #'
-#' Function for repositioning
-#' pre-joined atlas data (i.e. data and atlas
-#' already joined to a single data frame).
-#' This makes it possible for users to
-#' reposition the geometry data for the atlas
-#' for control over final plot layout. For even
-#' more detailed control over the positioning,
-#' the "hemi" and "view" columns should be
-#' converted into factors and ordered by wanted
-#' order of appearance.
+#' Repositions pre-joined sf atlas data (i.e. data and atlas already joined to
+#' a single sf data frame) for control over final plot layout. For even more
+#' detailed control, convert the "hemi" and "view" columns into factors ordered
+#' by wanted order of appearance.
+#'
+#' This is the sf layout helper. It requires the `sf` package (an optional
+#' dependency); for the sf-free default, build a layout with [position_brain()]
+#' and pass it to [geom_brain()].
 #'
 #' @param data sf-data.frame of joined brain atlas and data
 #' @param position Position formula for slices. For cortical atlases, use
@@ -22,7 +20,7 @@
 #' @return sf-data.frame with re-positioned slices
 #' @export
 #'
-#' @examples
+#' @examplesIf requireNamespace("sf", quietly = TRUE)
 #' reposition_brain(dk(), hemi ~ view)
 #' reposition_brain(dk(), view ~ hemi)
 #' reposition_brain(dk(), hemi + view ~ .)
@@ -39,18 +37,24 @@ reposition_brain <- function(
   ncol = NULL,
   views = NULL
 ) {
-  data <- as.data.frame(
+  require_sf("reposition_brain()")
+  data <- as.data.frame(data, stringsAsFactors = FALSE)
+  frame_2_position(
     data,
-    stringsAsFactors = FALSE
-  ) |>
-    frame_2_position(position, nrow = nrow, ncol = ncol, views = views)
+    position,
+    nrow = nrow,
+    ncol = ncol,
+    views = views
+  )
 }
 
 
-#' Alter brain atlas position
+#' Arrange brain atlas views
 #'
-#' Function to be used in the position argument in geom_brain
-#' to alter the position of the brain slice/views.
+#' Controls how an atlas's hemispheres and views are arranged in the plot --
+#' side by side, stacked, or in a grid -- and can zoom each view in on the
+#' regions you care about. Pass the result to the `position` argument of
+#' [geom_brain()] (or [annotate_brain()]).
 #'
 #' @param position Formula describing the rows ~ columns organisation for
 #'   cortical atlases (e.g., `hemi ~ view`). For subcortical/tract atlases,
@@ -65,10 +69,15 @@ reposition_brain <- function(
 #' @param views Character vector specifying which views to include and their
 #'   order. If NULL (default), all views are included in their original order.
 #'   Only applies to subcortical/tract atlases.
+#' @param zoom Controls per-view zoom. `NULL`/`FALSE` (default) draws each view
+#'   at full extent. `TRUE` zooms each view onto its focus regions; a character
+#'   vector names the focus regions explicitly.
+#' @param zoom_pad Fractional padding added around the focus window when `zoom`
+#'   is active. Defaults to `0.05` (5\%).
 #'
 #' @export
-#' @return a ggproto object
-#' @importFrom ggplot2 ggproto
+#' @return A layout specification to hand to [geom_brain()]'s `position`
+#'   argument.
 #' @examples
 #' library(ggplot2)
 #'
@@ -87,7 +96,6 @@ reposition_brain <- function(
 #'     show.legend = FALSE
 #'   )
 #'
-#' \donttest{
 #' ggplot() +
 #'   geom_brain(
 #'     atlas = aseg(), aes(fill = region),
@@ -108,8 +116,63 @@ reposition_brain <- function(
 #'     atlas = aseg(), aes(fill = region),
 #'     position = position_brain(type ~ .)
 #'   )
-#' }
 position_brain <- function(
+  position = "horizontal",
+  nrow = NULL,
+  ncol = NULL,
+  views = NULL,
+  zoom = NULL,
+  zoom_pad = 0.05
+) {
+  position_brain_polygon(
+    position = position,
+    nrow = nrow,
+    ncol = ncol,
+    views = views,
+    zoom = zoom,
+    zoom_pad = zoom_pad
+  )
+}
+
+#' Deprecated sf brain-view layout
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' The sf rendering path is deprecated. `position_brain_sf()` returns the
+#' legacy `PositionBrain` ggproto for use with [geom_brain_sf()]. For new
+#' code, use [position_brain()] (the polygon default), or convert the atlas
+#' with `as_sf_atlas()` and use [ggplot2::geom_sf()] directly.
+#'
+#' @inheritParams position_brain
+#' @export
+#' @return A `PositionBrain` ggproto object.
+#' @importFrom ggplot2 ggproto
+#' @keywords internal
+position_brain_sf <- function(
+  position = "horizontal",
+  nrow = NULL,
+  ncol = NULL,
+  views = NULL
+) {
+  lifecycle::deprecate_warn(
+    "2.2.0",
+    "position_brain_sf()",
+    details = paste(
+      "Use `position_brain()` for the polygon default, or `as_sf_atlas()`",
+      "with `ggplot2::geom_sf()` for an sf workflow."
+    )
+  )
+  require_sf("position_brain_sf()")
+  make_position_brain_sf(position, nrow = nrow, ncol = ncol, views = views)
+}
+
+#' Construct a PositionBrain ggproto without the deprecation warning
+#'
+#' @keywords internal
+#' @noRd
+#' @importFrom ggplot2 ggproto
+make_position_brain_sf <- function(
   position = "horizontal",
   nrow = NULL,
   ncol = NULL,
@@ -211,7 +274,9 @@ stacking_direction <- function(pos) {
 #' @noRd
 validate_stacking_formula <- function(pos, position) {
   is_single <- length(position) == 1 && position %in% c("rows", "columns")
-  if (!is_single) return(invisible())
+  if (!is_single) {
+    return(invisible())
+  }
 
   has_both <- sum(grepl("\\.|~", pos)) == 2
   if (!has_both) {
@@ -266,10 +331,9 @@ position_cortical <- function(pos, chosen) {
     ))
   }
   if (any(grepl("+", pos, fixed = TRUE))) {
-    stacking_direction(pos)
-  } else {
-    chosen
+    chosen <- stacking_direction(pos)
   }
+  chosen
 }
 
 #' Resolve position for a subcortical/tract atlas formula
@@ -292,7 +356,11 @@ position_subcortical <- function(pos, chosen, data) {
     chosen
   }
 
-  list(position = position, chosen = chosen, data = data)
+  list(
+    position = position,
+    chosen = chosen,
+    data = data
+  )
 }
 
 
@@ -332,7 +400,6 @@ extract_view_type <- function(views) {
 #'
 #' @return An sf data.frame with repositioned geometry and
 #'   adjusted bounding box.
-#' @importFrom sf st_as_sf
 #' @keywords internal
 #' @noRd
 frame_2_position <- function(
@@ -355,18 +422,30 @@ frame_2_position <- function(
     dfpos <- split_data(data, pos)
   }
 
-  df2 <- lapply(dfpos$data, gather_geometry)
-  posi <- ifelse(length(dfpos$position) > 1, "grid", dfpos$position)
+  posi <- if (length(dfpos$position) > 1) "grid" else dfpos$position
+  rows <- if (posi == "grid") dfpos$position[1] else NULL
+  columns <- if (posi == "grid") dfpos$position[2] else NULL
 
-  df3 <- switch(
+  res <- position_groups(
+    dfpos$data,
     posi,
-    rows = stack_vertical(df2),
-    columns = stack_horizontal(df2),
-    grid = stack_grid(df2, dfpos$position[1], dfpos$position[2])
+    rows,
+    columns,
+    bbox_of = function(g) as.numeric(sf::st_bbox(g$geometry)),
+    translate = function(g, dx, dy) {
+      g$geometry <- g$geometry + c(dx, dy)
+      g
+    }
   )
 
-  df4 <- st_as_sf(df3$df)
-  attr(sf::st_geometry(df4), "bbox") <- df3$box
+  out <- do.call(rbind, res$data)
+  if (posi == "grid") {
+    out <- drop_temp_columns(out)
+  }
+  df4 <- sf::st_as_sf(out)
+  box <- res$box
+  class(box) <- "bbox"
+  attr(sf::st_geometry(df4), "bbox") <- box
 
   df4
 }
@@ -429,164 +508,68 @@ split_data_grid <- function(data, nrow = NULL, ncol = NULL) {
 #' @noRd
 split_data <- function(data, position) {
   if (inherits(position, "formula")) {
-    pos <- position_formula(position, data)
-    if (!is.null(pos$data)) {
-      data <- pos$data
-    }
-    df2 <- dplyr::group_by_at(data, pos$chosen)
-    df2 <- dplyr::group_split(df2)
-    pos <- pos$position
+    split_data_formula(data, position)
   } else {
-    layout_direction <- "columns"
-    if (length(position) == 1) {
-      if (position %in% c("horizontal", "vertical")) {
-        layout_direction <- if (position == "vertical") "rows" else "columns"
-        position <- default_order(data)
-      }
-    }
-    pos <- as.data.frame(
-      strsplit(position, " ", fixed = TRUE),
-      stringsAsFactors = FALSE
-    )
-    atlas_type <- unique(data$type)[1]
-    if (atlas_type == "cortical") {
-      k <- cbind(
-        pos[2, ] %in% data$view,
-        pos[1, ] %in% data$hemi
-      )
-      k <- vapply(seq_len(nrow(k)), function(x) sum(k[x, ]), numeric(1))
-      pos <- pos[k == 2]
+    split_data_string(data, position)
+  }
+}
 
-      df2 <- lapply(pos, function(x) {
-        data[data$hemi == x[1] & data$view == x[2], ]
-      })
-    } else {
-      df2 <- lapply(pos, function(x) {
-        data[data$view == x, ]
-      })
-    }
-    pos <- layout_direction
+#' Split atlas data by a position formula (e.g. `hemi ~ view`)
+#'
+#' @return A list with `data` (one data.frame per group) and `position`
+#'   (the resolved layout direction or variable names).
+#' @keywords internal
+#' @noRd
+split_data_formula <- function(data, position) {
+  pos <- position_formula(position, data)
+  if (!is.null(pos$data)) {
+    data <- pos$data
+  }
+  groups <- dplyr::group_split(dplyr::group_by_at(data, pos$chosen))
+  list(data = groups, position = pos$position)
+}
+
+#' Split atlas data by a string layout
+#'
+#' `position` is either `"horizontal"`/`"vertical"` (expanded to the atlas's
+#' default view order) or pre-built `"hemi view"` / `"view"` identifiers.
+#'
+#' @inherit split_data_formula return
+#' @keywords internal
+#' @noRd
+split_data_string <- function(data, position) {
+  layout_direction <- "columns"
+  if (length(position) == 1 && position %in% c("horizontal", "vertical")) {
+    layout_direction <- if (position == "vertical") "rows" else "columns"
+    position <- default_order(data)
   }
 
-  list(data = df2, position = pos)
-}
-
-#' Zero-origin geometry for a single view
-#'
-#' Translates geometry so the bounding box starts at (0, 0).
-#'
-#' @param df Data.frame with a `geometry` column.
-#'
-#' @return Modified data.frame with shifted geometry.
-#' @keywords internal
-#' @noRd
-gather_geometry <- function(df) {
-  bbx <- sf::st_bbox(df$geometry)
-  df$geometry <- df$geometry - bbx[c("xmin", "ymin")]
-  df
-}
-
-#' Center a view within a grid cell
-#'
-#' Offsets geometry so the view is centered inside a cell of
-#' `cell_size` at position `grid_pos`.
-#'
-#' @param df Data.frame with a `geometry` column.
-#' @param cell_size Numeric length-2 vector `c(width, height)`.
-#' @param grid_pos Numeric length-2 vector `c(x, y)` offset.
-#'
-#' @return Modified data.frame with repositioned geometry.
-#' @keywords internal
-#' @noRd
-center_view <- function(df, cell_size, grid_pos) {
-  bbox <- sf::st_bbox(df$geometry)
-  view_width <- bbox["xmax"] - bbox["xmin"]
-  view_height <- bbox["ymax"] - bbox["ymin"]
-  view_size <- c(view_width, view_height)
-  center_offset <- (cell_size - view_size) / 2
-  df$geometry <- df$geometry + grid_pos + center_offset
-  df
-}
-
-#' Arrange views in a horizontal row
-#'
-#' @param df List of data.frames, each with a `geometry` column.
-#'
-#' @return A list with `df` (combined data.frame) and `box` (bbox).
-#' @keywords internal
-#' @noRd
-stack_horizontal <- function(df) {
-  sep <- get_sep(df)
-  cell_size <- sep / 1.2
-
-  bx <- list()
-  for (k in seq_along(df)) {
-    df[[k]] <- center_view(df[[k]], cell_size, c((k - 1) * sep[1], 0))
-    bx[[k]] <- sf::st_bbox(df[[k]]$geometry)
-  }
-
-  list(df = do.call(rbind, df), box = get_box(bx))
-}
-
-#' Arrange views in a vertical column
-#'
-#' @param df List of data.frames, each with a `geometry` column.
-#'
-#' @return A list with `df` (combined data.frame) and `box` (bbox).
-#' @keywords internal
-#' @noRd
-stack_vertical <- function(df) {
-  sep <- get_sep(df)
-  cell_size <- sep / 1.2
-
-  bx <- list()
-  for (k in seq_along(df)) {
-    df[[k]] <- center_view(df[[k]], cell_size, c(0, (k - 1) * sep[2]))
-    bx[[k]] <- sf::st_bbox(df[[k]]$geometry)
-  }
-
-  list(df = do.call(rbind, df), box = get_box(bx))
-}
-
-#' Arrange views in a row-by-column grid
-#'
-#' @param df List of data.frames, each with a `geometry` column
-#'   and grid assignment columns.
-#' @param rows Column name identifying the row variable.
-#' @param columns Column name identifying the column variable.
-#'
-#' @return A list with `df` (combined data.frame) and `box` (bbox).
-#' @keywords internal
-#' @noRd
-stack_grid <- function(df, rows, columns) {
-  sep <- get_sep(df)
-  lookup <- grid_lookup(df, rows, columns)
-
-  grid <- expand.grid(
-    col_idx = seq_along(lookup$col_vals),
-    row_idx = seq_along(lookup$row_vals)
+  pos <- as.data.frame(
+    strsplit(position, " ", fixed = TRUE),
+    stringsAsFactors = FALSE
   )
 
-  cell_size <- sep / 1.2
-  df_positioned <- Map(
-    function(ri, ci) {
-      idx <- which(
-        lookup$df_rows == lookup$row_vals[ri] &
-          lookup$df_cols == lookup$col_vals[ci]
-      )
-      if (length(idx) != 1) return(NULL)
-      grid_pos <- c((ci - 1) * sep[1], (ri - 1) * sep[2])
-      center_view(df[[idx]], cell_size, grid_pos)
-    },
-    grid$row_idx,
-    grid$col_idx
-  )
+  groups <- if (identical(unique(data$type)[1], "cortical")) {
+    split_cortical_pairs(data, pos)
+  } else {
+    lapply(pos, function(view) data[data$view == view, ])
+  }
 
-  df_positioned <- Filter(Negate(is.null), df_positioned)
-  bx <- lapply(df_positioned, function(x) sf::st_bbox(x$geometry))
-  result_df <- drop_temp_columns(do.call(rbind, df_positioned))
+  list(data = groups, position = layout_direction)
+}
 
-  list(df = result_df, box = get_box(bx))
+#' Subset cortical data into its existing hemi/view pairs
+#'
+#' Columns of `pos` are `c(hemi, view)` pairs; keep only the pairs the atlas
+#' actually contains, then subset the data to each.
+#' @keywords internal
+#' @noRd
+split_cortical_pairs <- function(data, pos) {
+  has_pair <- (pos[1, ] %in% data$hemi) & (pos[2, ] %in% data$view)
+  pos <- pos[has_pair]
+  lapply(pos, function(pair) {
+    data[data$hemi == pair[1] & data$view == pair[2], ]
+  })
 }
 
 #' Build a lookup of row/column values per data.frame element
@@ -604,10 +587,14 @@ grid_lookup <- function(df, rows, columns) {
     if (is.numeric(x)) as.character(x) else x
   }
   df_rows <- vapply(
-    df, function(x) as_char(unique(x[[rows]])), character(1)
+    df,
+    function(x) as_char(unique(x[[rows]])),
+    character(1)
   )
   df_cols <- vapply(
-    df, function(x) as_char(unique(x[[columns]])), character(1)
+    df,
+    function(x) as_char(unique(x[[columns]])),
+    character(1)
   )
   list(
     df_rows = df_rows,
@@ -625,50 +612,19 @@ grid_lookup <- function(df, rows, columns) {
 #' @noRd
 drop_temp_columns <- function(df) {
   temp <- c(
-    "xmin", "xmax", "ymin", "ymax",
-    ".grid_row", ".grid_col", ".view_type"
+    "xmin",
+    "xmax",
+    "ymin",
+    "ymax",
+    ".grid_row",
+    ".grid_col",
+    ".view_type"
   )
   temp <- temp[temp %in% names(df)]
-  if (length(temp) > 0) df[, temp] <- NULL
+  if (length(temp) > 0) {
+    df[, temp] <- NULL
+  }
   df
-}
-
-#' Compute a padded bounding box from a list of bboxes
-#'
-#' @param bx List of sf bbox objects.
-#'
-#' @return An sf `bbox` object with 1% padding.
-#' @keywords internal
-#' @noRd
-get_box <- function(bx) {
-  bx <- do.call(rbind, bx)
-  pad <- max(bx) * 0.01
-  bx <- c(
-    -pad,
-    -pad,
-    max(bx[, "xmax"]) + pad,
-    max(bx[, "ymax"]) + pad
-  )
-  x <- stats::setNames(bx, c("xmin", "ymin", "xmax", "ymax"))
-  class(x) <- "bbox"
-  x
-}
-
-#' Compute cell separation distances
-#'
-#' Determines the x and y spacing between grid cells based on
-#' the maximum bounding-box dimensions across all views.
-#'
-#' @param data List of data.frames, each with a `geometry` column.
-#'
-#' @return Named numeric vector `c(x = ..., y = ...)`.
-#' @keywords internal
-#' @noRd
-get_sep <- function(data) {
-  get_bbox <- function(x) sf::st_bbox(x$geometry)
-  bboxes <- vapply(data, get_bbox, numeric(4))
-  sep <- c(max(bboxes[3, ]), max(bboxes[4, ]))
-  c("x" = sep[1] + sep[1] * 0.2, "y" = sep[2] + sep[2] * 0.2)
 }
 
 #' Generate the default view ordering for an atlas

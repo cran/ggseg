@@ -1,19 +1,19 @@
 Package: ggseg
 Title: Plotting Tool for Brain Atlases
-Version: 2.1.1
+Version: 2.2.0
 Authors@R: c(
-    person("Athanasia Mo", "Mowinckel", , "a.m.mowinckel@psykologi.uio.no", role = c("aut", "cre", "cph"),
+    person("Athanasia Mo", "Mowinckel", , "a.m.mowinckel@psykologi.uio.no", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5756-0223")),
-    person("Didac", "Vidal-Piñeiro", , "d.v.pineiro@psykologi.uio.no", role = c("aut", "cph"),
+    person("Didac", "Vidal-Piñeiro", , "d.v.pineiro@psykologi.uio.no", role = "aut",
            comment = c(ORCID = "0000-0001-9997-9156")),
-    person("Ramiro", "Magno", , "ramiro.magno@gmail.com", role = "aut",
+    person("Ramiro", "Magno", , "ramiro.magno@gmail.com", role = "ctb",
            comment = c(ORCID = "0000-0001-5226-3441")),
     person("Center for Lifespan Changes in Brain and Cognition, University of Oslo, Norway",
            role = "cph")
   )
 Description: Provides a 'ggplot2' geom and position for visualizing brain
     region data on cortical, subcortical, and white matter tract atlases.
-    Brain atlas geometries are stored as simple features ('sf'), enabling
+    Brain atlas geometries are stored as polygon data, enabling
     seamless integration with the 'ggplot2' ecosystem including faceting,
     custom scales, and themes.  Mowinckel & Vidal-Piñeiro (2020)
     <doi:10.1177/2515245920928009>.
@@ -21,11 +21,11 @@ License: MIT + file LICENSE
 URL: https://ggsegverse.github.io/ggseg/,
         https://github.com/ggsegverse/ggseg
 BugReports: https://github.com/ggsegverse/ggseg/issues
-Depends: R (>= 4.1.0)
-Imports: cli, dplyr (>= 1.0.0), ggplot2 (>= 3.3), ggseg.formats, grid,
-        lifecycle, sf, stats, tidyr (>= 1.0.0), utils
-Suggests: covr, devtools, here, knitr, rmarkdown, spelling, testthat
-        (>= 3.0.0), vdiffr
+Depends: R (>= 3.3)
+Imports: cli, dplyr (>= 1.0.0), ggplot2 (>= 3.3), ggseg.formats (>=
+        0.0.3), grid, lifecycle, rlang, tidyr (>= 1.0.0), utils
+Suggests: covr, devtools, here, knitr, rmarkdown, sf, spelling,
+        testthat (>= 3.0.0), vdiffr, withr
 VignetteBuilder: knitr
 Config/Needs/website: ggsegverse/ggseg.docs
 Config/testthat/edition: 3
@@ -33,17 +33,15 @@ Config/testthat/parallel: true
 Encoding: UTF-8
 Language: en-US
 RoxygenNote: 7.3.3
-SystemRequirements: C++17, GDAL (>= 2.0.1), GEOS (>= 3.4.0), PROJ (>=
-        4.8.0)
 NeedsCompilation: no
-Packaged: 2026-04-16 18:47:55 UTC; athanasm
-Author: Athanasia Mo Mowinckel [aut, cre, cph] (ORCID:
+Packaged: 2026-06-21 17:59:50 UTC; athanasm
+Author: Athanasia Mo Mowinckel [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-5756-0223>),
-  Didac Vidal-Piñeiro [aut, cph] (ORCID:
+  Didac Vidal-Piñeiro [aut] (ORCID:
     <https://orcid.org/0000-0001-9997-9156>),
-  Ramiro Magno [aut] (ORCID: <https://orcid.org/0000-0001-5226-3441>),
+  Ramiro Magno [ctb] (ORCID: <https://orcid.org/0000-0001-5226-3441>),
   Center for Lifespan Changes in Brain and Cognition, University of Oslo,
     Norway [cph]
 Maintainer: Athanasia Mo Mowinckel <a.m.mowinckel@psykologi.uio.no>
 Repository: CRAN
-Date/Publication: 2026-04-16 19:20:02 UTC
+Date/Publication: 2026-06-22 05:20:16 UTC

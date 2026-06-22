@@ -18,24 +18,33 @@ knitr::opts_chunk$set(
 # data
 
 ## -----------------------------------------------------------------------------
-# ggplot(data |> mutate(label = paste0("lh_", label))) +
-#   geom_brain(atlas = dk(), mapping = aes(fill = ThickAvg))
+# ggplot() +
+#   geom_brain(
+#     atlas = dk(),
+#     data = data |> mutate(label = paste0("lh_", label)),
+#     mapping = aes(fill = ThickAvg)
+#   )
 
 ## -----------------------------------------------------------------------------
 # dat <- read_atlas_files(subjects_dir, "aparc.stats$")
 # dat
 
 ## -----------------------------------------------------------------------------
-# ggplot(dat) +
-#   geom_brain(atlas = dk(), mapping = aes(fill = ThickStd))
+# ggplot() +
+#   geom_brain(atlas = dk(), data = dat, mapping = aes(fill = ThickStd))
 
 ## -----------------------------------------------------------------------------
 # library(tidyr)
 # 
-# dat |>
-#   pivot_longer(-c(subject, label), names_to = "stat", values_to = "val") |>
-#   ggplot() +
-#   geom_brain(atlas = dk(), mapping = aes(fill = val)) +
+# long <- dat |>
+#   pivot_longer(-c(subject, label), names_to = "stat", values_to = "val")
+# 
+# ggplot() +
+#   geom_brain(
+#     atlas = dk(),
+#     data = group_by(long, stat),
+#     mapping = aes(fill = val)
+#   ) +
 #   facet_wrap(~stat)
 
 ## -----------------------------------------------------------------------------
@@ -48,6 +57,10 @@ knitr::opts_chunk$set(
 # dat
 
 ## -----------------------------------------------------------------------------
-# ggplot(dat |> filter(grepl("lh|rh", label))) +
-#   geom_brain(atlas = dk(), mapping = aes(fill = volume))
+# ggplot() +
+#   geom_brain(
+#     atlas = dk(),
+#     data = dat |> filter(grepl("lh|rh", label)),
+#     mapping = aes(fill = volume)
+#   )
 

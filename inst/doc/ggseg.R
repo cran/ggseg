@@ -10,22 +10,28 @@ library(ggseg)
 library(ggplot2)
 
 ## -----------------------------------------------------------------------------
-dk
+dk()
 
 ## -----------------------------------------------------------------------------
 plot(dk())
 
 ## -----------------------------------------------------------------------------
-ggseg.formats::atlas_regions(dk())
-ggseg.formats::atlas_labels(dk())
+library(ggseg.formats)
+
+atlas_regions(dk())
+atlas_labels(dk())
 
 ## -----------------------------------------------------------------------------
 ggplot() +
-  geom_brain(atlas = dk())
+  geom_brain(atlas = dk(), show.legend = FALSE)
 
 ## -----------------------------------------------------------------------------
 ggplot() +
-  geom_brain(atlas = dk(), position = position_brain(hemi ~ view))
+  geom_brain(
+    atlas = dk(),
+    position = position_brain(hemi ~ view),
+    show.legend = FALSE
+  )
 
 ## -----------------------------------------------------------------------------
 ggplot() +
@@ -36,19 +42,20 @@ ggplot() +
       "right medial",
       "left lateral",
       "left medial"
-    ))
+    )),
+    show.legend = FALSE
   )
 
 ## -----------------------------------------------------------------------------
 ggplot() +
-  geom_brain(atlas = dk(), view = "lateral")
+  geom_brain(atlas = dk(), view = "lateral", show.legend = FALSE)
 
 ## -----------------------------------------------------------------------------
 ggplot() +
   geom_brain(atlas = dk(), hemi = "left")
 
 ## -----------------------------------------------------------------------------
-ggseg.formats::atlas_views(aseg())
+atlas_views(aseg())
 
 ## -----------------------------------------------------------------------------
 library(dplyr)
@@ -63,9 +70,10 @@ some_data <- tibble(
   p = sample(seq(0, 0.5, 0.001), 4)
 )
 
-ggplot(some_data) +
+ggplot() +
   geom_brain(
     atlas = dk(),
+    data = some_data,
     position = position_brain(hemi ~ view),
     aes(fill = p)
   ) +
@@ -87,9 +95,10 @@ some_data <- tibble(
   group = c(rep("A", 4), rep("B", 4))
 )
 
-ggplot(some_data) +
+ggplot() +
   geom_brain(
     atlas = dk(),
+    data = group_by(some_data, group),
     position = position_brain(hemi ~ view),
     aes(fill = p)
   ) +
@@ -97,13 +106,15 @@ ggplot(some_data) +
 
 ## -----------------------------------------------------------------------------
 data <- data.frame(
-  region = ggseg.formats::atlas_regions(dk())[1:3],
-  reg_col = ggseg.formats::atlas_regions(dk())[1:3]
+  region = atlas_regions(dk())[1:3],
+  reg_col = atlas_labels(dk())[1:3]
 )
 
-ggplot(data) +
-  geom_brain(atlas = dk(), aes(fill = reg_col)) +
-  scale_fill_brain_manual(dk()$palette[data$region])
+palette <- atlas_palette(dk())[1:3]
+
+ggplot() +
+  geom_brain(atlas = dk(), data = data, aes(fill = reg_col)) +
+  scale_fill_brain_manual(palette)
 
 ## -----------------------------------------------------------------------------
 # ggplot() +

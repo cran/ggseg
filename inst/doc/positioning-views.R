@@ -118,19 +118,6 @@ ggplot() +
 #   theme_void()
 
 ## -----------------------------------------------------------------------------
-atlas_data <- as.data.frame(aseg())
-
-repositioned <- reposition_brain(
-  atlas_data,
-  views = c("sagittal", "axial_3", "coronal_3"),
-  nrow = 1
-)
-
-ggplot(repositioned) +
-  geom_sf(aes(fill = region), show.legend = FALSE) +
-  theme_void()
-
-## -----------------------------------------------------------------------------
 pos <- position_brain(hemi ~ view)
 ggplot() +
   geom_brain(atlas = dk(), position = pos, show.legend = FALSE) +
@@ -149,9 +136,60 @@ ggplot() +
   geom_brain(atlas = dk(), show.legend = FALSE) +
   annotate_brain(
     atlas = dk(),
+    padding = 0.08,
     size = 2.5,
     colour = "grey50",
     fontface = "italic"
   ) +
+  theme_void()
+
+## -----------------------------------------------------------------------------
+my_data <- data.frame(
+  region = ggseg.formats::atlas_regions(aseg())[1:3],
+  value = c(1, 2, 3)
+)
+
+ggplot() +
+  geom_brain(
+    atlas = aseg(),
+    data = my_data,
+    aes(fill = value),
+    position = position_brain(zoom = TRUE)
+  ) +
+  scale_fill_viridis_c(na.value = "grey85") +
+  theme_void()
+
+## -----------------------------------------------------------------------------
+focus <- c("Thalamus Proper", "Putamen", "Hippocampus")
+
+ggplot() +
+  geom_brain(
+    atlas = aseg(),
+    position = position_brain(zoom = focus),
+    show.legend = FALSE
+  ) +
+  theme_void()
+
+## -----------------------------------------------------------------------------
+ggplot() +
+  geom_brain(
+    atlas = aseg(),
+    position = position_brain(zoom = focus, zoom_pad = 0.01),
+    show.legend = FALSE
+  ) +
+  theme_void()
+
+## -----------------------------------------------------------------------------
+ggplot() +
+  geom_brain(
+    atlas = aseg(),
+    position = position_brain(zoom = focus, zoom_pad = 0.25),
+    show.legend = FALSE
+  ) +
+  theme_void()
+
+## -----------------------------------------------------------------------------
+ggplot() +
+  geom_brain(atlas = aseg(), context = FALSE, show.legend = FALSE) +
   theme_void()
 

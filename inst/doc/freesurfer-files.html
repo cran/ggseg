@@ -363,8 +363,12 @@ package, which ggseg re-exports.</p>
 <p>The hemisphere is encoded in the filename (<code>lh.</code> or
 <code>rh.</code>). To match the atlas, prepend it to the label
 column:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">ggplot</span>(data <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">&quot;lh_&quot;</span>, label))) <span class="sc">+</span></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">geom_brain</span>(<span class="at">atlas =</span> <span class="fu">dk</span>(), <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> ThickAvg))</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">geom_brain</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    <span class="at">atlas =</span> <span class="fu">dk</span>(),</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    <span class="at">data =</span> data <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">&quot;lh_&quot;</span>, label)),</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> ThickAvg)</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  )</span></code></pre></div>
 </div>
 <div id="reading-stats-files-across-subjects" class="section level2">
 <h2>Reading stats files across subjects</h2>
@@ -377,16 +381,21 @@ files:</p>
 <code>aparc.stats</code> but not <code>aparc.a2009s.stats</code>.</p>
 <p>The function adds hemisphere prefixes automatically, so the data is
 ready for plotting:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">ggplot</span>(dat) <span class="sc">+</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">geom_brain</span>(<span class="at">atlas =</span> <span class="fu">dk</span>(), <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> ThickStd))</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">geom_brain</span>(<span class="at">atlas =</span> <span class="fu">dk</span>(), <span class="at">data =</span> dat, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> ThickStd))</span></code></pre></div>
 <p>To show all metrics at once, pivot and facet:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span><span class="fu">c</span>(subject, label), <span class="at">names_to =</span> <span class="st">&quot;stat&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;val&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="fu">geom_brain</span>(<span class="at">atlas =</span> <span class="fu">dk</span>(), <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> val)) <span class="sc">+</span></span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>stat)</span></code></pre></div>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>long <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span><span class="fu">c</span>(subject, label), <span class="at">names_to =</span> <span class="st">&quot;stat&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;val&quot;</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="fu">geom_brain</span>(</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>    <span class="at">atlas =</span> <span class="fu">dk</span>(),</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>    <span class="at">data =</span> <span class="fu">group_by</span>(long, stat),</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>    <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> val)</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>stat)</span></code></pre></div>
 </div>
 <div id="reading-freesurfer-stats-tables" class="section level2">
 <h2>Reading FreeSurfer stats tables</h2>
@@ -410,8 +419,12 @@ argument strips that suffix and renames the value column:</p>
 <h2>Filtering non-region rows</h2>
 <p>FreeSurfer tables include summary measures (total volume, ICV) that
 don’t correspond to atlas regions. Filter them before plotting:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">ggplot</span>(dat <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">&quot;lh|rh&quot;</span>, label))) <span class="sc">+</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">geom_brain</span>(<span class="at">atlas =</span> <span class="fu">dk</span>(), <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> volume))</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">geom_brain</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    <span class="at">atlas =</span> <span class="fu">dk</span>(),</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    <span class="at">data =</span> dat <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">&quot;lh|rh&quot;</span>, label)),</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>    <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> volume)</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  )</span></code></pre></div>
 <p>The <code>grepl(&quot;lh|rh&quot;, label)</code> pattern keeps only
 hemisphere-specific rows.</p>
 </div>
