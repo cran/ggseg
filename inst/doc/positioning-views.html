@@ -479,8 +479,8 @@ grid.</div>
 include and in what order. Check what’s available with
 <code>ggseg.formats::atlas_views()</code>:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>ggseg.formats<span class="sc">::</span><span class="fu">atlas_views</span>(<span class="fu">aseg</span>())</span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;axial_3&quot;   &quot;axial_4&quot;   &quot;axial_5&quot;   &quot;axial_6&quot;   &quot;coronal_1&quot; &quot;coronal_2&quot;</span></span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; [7] &quot;sagittal&quot;</span></span></code></pre></div>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;axial_3&quot;   &quot;axial_4&quot;   &quot;axial_5&quot;   &quot;sagittal&quot;  &quot;axial_6&quot;   &quot;coronal_1&quot;</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; [7] &quot;coronal_2&quot;</span></span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
 <span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="fu">geom_brain</span>(</span>
 <span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>    <span class="at">atlas =</span> <span class="fu">aseg</span>(),</span>

@@ -1,6 +1,6 @@
 Package: ggseg
 Title: Plotting Tool for Brain Atlases
-Version: 2.2.0
+Version: 2.2.1
 Authors@R: c(
     person("Athanasia Mo", "Mowinckel", , "a.m.mowinckel@psykologi.uio.no", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5756-0223")),
@@ -34,7 +34,7 @@ Encoding: UTF-8
 Language: en-US
 RoxygenNote: 7.3.3
 NeedsCompilation: no
-Packaged: 2026-06-21 17:59:50 UTC; athanasm
+Packaged: 2026-07-02 18:07:44 UTC; athanasm
 Author: Athanasia Mo Mowinckel [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-5756-0223>),
   Didac Vidal-Piñeiro [aut] (ORCID:
@@ -44,4 +44,4 @@ Author: Athanasia Mo Mowinckel [aut, cre] (ORCID:
     Norway [cph]
 Maintainer: Athanasia Mo Mowinckel <a.m.mowinckel@psykologi.uio.no>
 Repository: CRAN
-Date/Publication: 2026-06-22 05:20:16 UTC
+Date/Publication: 2026-07-03 02:50:06 UTC
